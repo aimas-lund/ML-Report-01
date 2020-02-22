@@ -7,8 +7,6 @@ Created on Tue Feb 11 13:44:37 2020
 import numpy as np
 import pandas as pd
 
-""""""
-
 
 def load_csv(path):
     """
