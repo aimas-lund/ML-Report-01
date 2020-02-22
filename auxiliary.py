@@ -36,7 +36,7 @@ def one_out_of_k(input, column_index=0, return_uniques=False):
     :param input:
     :param column_index:
     :param return_uniques: 1xN Numpy array, boolean specifying if the unique values of the input should be returned
-    :return: The One-out-of-K numpy-matrix and optionally the unique values from the input array.
+    :return: The One-out-of-K numpy-matrix and optionally the unique values from the input matrix.
     """
     chosen_column = input[:, column_index]
     uniques = np.unique(chosen_column)
