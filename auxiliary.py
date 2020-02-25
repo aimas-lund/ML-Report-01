@@ -18,15 +18,6 @@ def load_csv(path):
     headers = data.columns.values
     data = data.values
 
-    # formats gender to numerical, "boolean" value
-    for i in range(len(data)):
-        if data[i, 3] == 'mal':
-            data[i, 3] = 0
-        elif data[i, 3] == 'fem':
-            data[i, 3] = 1
-        else:
-            data[i, 3] = -1
-
     return headers, data
 
 
