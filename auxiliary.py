@@ -5,21 +5,6 @@ Created on Tue Feb 11 13:44:37 2020
 @author: Team Forest
 """
 import numpy as np
-import pandas as pd
-
-
-def load_csv(path):
-    """
-    Reads a file (csv) and formats it as specified.
-    :param path:
-    :return: Tuple containing numpy array of headers and data values respectively.
-    """
-    data = pd.read_csv(path)
-    headers = data.columns.values
-    data = data.values
-
-    return headers, data
-
 
 def one_out_of_k(input, column_index=0, return_uniques=False):
     """

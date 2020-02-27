@@ -2,8 +2,13 @@ from auxiliary import load_csv, one_out_of_k
 from matplotlib.pyplot import figure, plot, title, legend, xlabel, ylabel, show, grid
 from scipy.linalg import svd
 import numpy as np
+import seaborn as sb
+import pandas as pd
 
-attribute_names, raw_data = load_csv("./res/spotify-data-apr-2019.csv")
+file_path = "./res/spotify-data-apr-2019.csv"
+raw_data = pd.read_csv(file_path)
+attribute_names = raw_data.columns.values
+data = raw_data.values
 class_names, X = one_out_of_k(raw_data, column_index=13, return_uniques=True)
 class_dict = dict(zip(range(len(class_names)), class_names))
 
@@ -18,7 +23,7 @@ j = 7  # loudness column
 ###############################################
 # Age vs Bone-Density plot
 ###############################################
-
+"""
 f1 = figure()
 title('Spotify API Data')
 
@@ -26,15 +31,27 @@ for color in range(C):
     # select indices belonging to class c:
     class_mask = y == class_dict[color]
     q = raw_data[class_mask, i]
-    if color == 4:
-        plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1, markevery=20)
-    else:
-        plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1, markevery=150)
+    plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1)
+    #if color == 4:
+    #    plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1, markevery=20)
+    #else:
+    #    plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1, markevery=150)
+
 
 legend(class_names)
 xlabel(attribute_names[i])
 ylabel(attribute_names[j])
 show()
+"""
+###############################################
+# Seaborn Plotting
+###############################################
+
+
+sb.set(style="ticks")
+g = sb.relplot(x="energy", y="loudness", hue="popularity_interval",
+               palette=['blue', 'green', 'orange', 'red', 'black'],
+               sizes=(10, 100), col="popularity_interval", data=raw_data)
 
 ###############################################
 # Principal Component Analysis
