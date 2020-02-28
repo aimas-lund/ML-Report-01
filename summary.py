@@ -1,18 +1,18 @@
-from auxiliary import load_csv, one_out_of_k
-from matplotlib.pyplot import figure, plot, title, legend, xlabel, ylabel, show, grid
+from auxiliary import one_out_of_k
+from matplotlib.pyplot import figure, plot, title, legend, xlabel, ylabel, show, grid, xticks, yticks
 from scipy.linalg import svd
 import numpy as np
 import seaborn as sb
 import pandas as pd
 
 file_path = "./res/spotify-data-apr-2019.csv"
-raw_data = pd.read_csv(file_path)
-attribute_names = raw_data.columns.values
-data = raw_data.values
-class_names, X = one_out_of_k(raw_data, column_index=13, return_uniques=True)
+df_data = pd.read_csv(file_path)
+attribute_names = df_data.columns.values
+data = df_data.values
+class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)
 class_dict = dict(zip(range(len(class_names)), class_names))
 
-y = raw_data[:, 13]
+y = data[:, 13]
 N = len(y)
 M = len(attribute_names)
 C = len(class_names)
@@ -21,37 +21,19 @@ i = 3  # energy column
 j = 7  # loudness column
 
 ###############################################
-# Age vs Bone-Density plot
-###############################################
-"""
-f1 = figure()
-title('Spotify API Data')
-
-for color in range(C):
-    # select indices belonging to class c:
-    class_mask = y == class_dict[color]
-    q = raw_data[class_mask, i]
-    plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1)
-    #if color == 4:
-    #    plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1, markevery=20)
-    #else:
-    #    plot(raw_data[class_mask, i], raw_data[class_mask, j], 'o', alpha=1, markevery=150)
-
-
-legend(class_names)
-xlabel(attribute_names[i])
-ylabel(attribute_names[j])
-show()
-"""
-###############################################
 # Seaborn Plotting
 ###############################################
 
+palette = ['blue', 'purple', 'red', 'green', 'black']
 
-sb.set(style="ticks")
-g = sb.relplot(x="energy", y="loudness", hue="popularity_interval",
-               palette=['blue', 'green', 'orange', 'red', 'black'],
-               sizes=(10, 100), col="popularity_interval", data=raw_data)
+# print plot of energy vs loudness
+sb.set(style="ticks", rc={'figure.figsize':(16,6)})
+sb.relplot(x="energy", y="loudness",
+           hue="popularity_interval",
+           palette=palette,
+           col="popularity_interval",
+           alpha=0.5,
+           data=df_data)
 
 ###############################################
 # Principal Component Analysis
@@ -69,11 +51,13 @@ threshold = 0.9
 
 # Plot variance explained
 f2 = figure()
+xl = [sum(x) for x in zip(list(range(len(rho))), [1]*len(rho))]
 plot(range(1, len(rho) + 1), rho, 'x-')
 plot(range(1, len(rho) + 1), np.cumsum(rho), 'o-')
 plot([1, len(rho)], [threshold, threshold], 'k--')
 title('Variance explained by principal components')
 xlabel('Principal component')
+xticks(xl, xl)
 ylabel('Variance explained')
 legend(['Individual', 'Cumulative', 'Threshold'])
 grid()
@@ -96,7 +80,7 @@ j = 1
 
 # Plot PCA of the data
 f = figure()
-title('NanoNose data: PCA')
+title('Spotify Music Attributes: PCA')
 # Z = array(Z)
 for color in range(C):
     # select indices belonging to class c:
