@@ -10,9 +10,8 @@ df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
 data = df_data.values
 
-# One-out-of-K on 'Popularity Interval'
-class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)
-mode_names, X = one_out_of_k(X, column_index=8, return_uniques=True) # One-out-of-K on 'mode'
+class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)  # One-out-of-K on 'popularity_interval'
+mode_names, X = one_out_of_k(X, column_index=8, return_uniques=True)  # One-out-of-K on 'mode'
 class_dict = dict(zip(range(len(class_names)), class_names))
 
 y = data[:, 13]
@@ -56,13 +55,14 @@ plt.show()
 
 palette = ['blue', 'purple', 'red', 'green', 'black']
 # print plot of energy vs loudness
-sb.set(style="ticks", rc={'figure.figsize':(16,6)})
+sb.set(style="ticks", rc={'figure.figsize': (16, 6)})
 sb.relplot(x="energy", y="loudness",
            hue="popularity_interval",
            palette=palette,
            col="popularity_interval",
            alpha=0.5,
            data=df_data)
+
 ###############################################
 # Principal Component Analysis
 ###############################################
@@ -78,7 +78,7 @@ rho = (S * S) / (S * S).sum()
 threshold = 0.9
 # Plot variance explained
 f2 = plt.figure()
-xl = [sum(x) for x in zip(list(range(len(rho))), [1]*len(rho))]
+xl = [sum(x) for x in zip(list(range(len(rho))), [1] * len(rho))]
 plt.plot(range(1, len(rho) + 1), rho, 'x-')
 plt.plot(range(1, len(rho) + 1), np.cumsum(rho), 'o-')
 plt.plot([1, len(rho)], [threshold, threshold], 'k--')
