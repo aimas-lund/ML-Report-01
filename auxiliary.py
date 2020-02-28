@@ -5,20 +5,26 @@ Created on Tue Feb 11 13:44:37 2020
 @author: Team Forest
 """
 import numpy as np
-import pandas as pd
 
 
-def load_csv(path):
-    """
-    Reads a file (csv) and formats it as specified.
-    :param path:
-    :return: Tuple containing numpy array of headers and data values respectively.
-    """
-    data = pd.read_csv(path)
-    headers = data.columns.values
-    data = data.values
-
-    return headers, data
+def add_elements_to_list(list,
+                         input_list,
+                         index,
+                         added_string=''):
+    if type(list) == list:
+        if added_string == '':
+            for i in range(len(input_list)):
+                list.insert(-index, added_string + str(input_list[-i]))
+        else:
+            for i in range(len(input_list)):
+                list.insert(-index, input_list[-i])
+    else:  # assuming if not list, then the input is numpy type
+        input_list = np.array(input_list, dtype=object)
+        if added_string != '':
+            for i in range(len(input_list)):
+                input_list[i] = added_string + str(int(input_list[i]))
+        list = np.insert(list, index, input_list)
+    return list
 
 
 def one_out_of_k(input, column_index=0, return_uniques=False):
