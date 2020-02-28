@@ -6,6 +6,27 @@ Created on Tue Feb 11 13:44:37 2020
 """
 import numpy as np
 
+
+def add_elements_to_list(list,
+                         input_list,
+                         index,
+                         added_string=''):
+    if type(list) == list:
+        if added_string == '':
+            for i in range(len(input_list)):
+                list.insert(-index, added_string + str(input_list[-i]))
+        else:
+            for i in range(len(input_list)):
+                list.insert(-index, input_list[-i])
+    else:  # assuming if not list, then the input is numpy type
+        input_list = np.array(input_list, dtype=object)
+        if added_string != '':
+            for i in range(len(input_list)):
+                input_list[i] = added_string + str(int(input_list[i]))
+        list = np.insert(list, index, input_list)
+    return list
+
+
 def one_out_of_k(input, column_index=0, return_uniques=False):
     """
     Function replacing a specified column of matrix with the One-out-of-K equivalent.
