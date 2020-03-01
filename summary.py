@@ -35,6 +35,10 @@ ax = sb.boxplot(data=box_data, showfliers=False)
 plt.xticks(rotation=-15)
 plt.show()
 
+plt.boxplot(box_data.values)
+plt.xticks(range(1, 8), box_data.columns.values)
+plt.show()
+
 plt.figure(figsize=(9, 3))
 
 plt.subplot(131)
@@ -141,16 +145,67 @@ attribute_names = np.delete(attribute_names,
 pca_names = []
 coeffs = []
 for i in range(len(rho)):
-    pca_names.append("PCA{}".format(i + 1))
+    pca_names.append("PC{}".format(i + 1))
 for i in range(len(rho)):
     coeffs.append("c{}".format(i + 1))
 pca_df = pd.DataFrame(data=V, columns=pca_names)
 
-for i in range(len(pca_names)):
-    f, ax = plt.subplots()
-    ax.yaxis.grid(color='gray', linestyle='dashed')
-    plt.xticks(np.arange(len(pca_names) + 2), coeffs, rotation=-20)
-    plt.title(pca_names[i] + " Coefficients")
-    plt.axhline(linewidth=1, color='black')
-    plt.bar(np.arange(len(pca_names)), V[i])
-    plt.show()
+
+def trim_axs(axs, N):
+    """little helper to massage the axs list to have correct length..."""
+    axs = axs.flat
+    for ax in axs[N:]:
+        ax.remove()
+    return axs[:N]
+
+
+# print first 9 PC's
+
+fig_pca, axs_pca = plt.subplots(3, 3, figsize=(16, 8), constrained_layout=True)
+axs_pca = trim_axs(axs_pca, pca_df.shape[1])
+plt.setp(axs_pca,
+         xticks=np.arange(len(pca_names)),
+         xticklabels=coeffs,
+         yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
+
+for i in range(0, 9):
+    axs_pca[i].yaxis.grid(color='gray', linestyle='dashed')
+    axs_pca[i].set_title(pca_names[i] + " Coefficients")
+    axs_pca[i].bar(np.arange(len(pca_names)), V[i])
+    axs_pca[i].axhline(linewidth=1, color='black')
+    axs_pca[i].set_xticklabels(coeffs, rotation=45)
+
+plt.show()
+
+# show PC's for index 9-18
+
+fig_pca, axs_pca = plt.subplots(3, 3, figsize=(16, 8), constrained_layout=True)
+axs_pca = trim_axs(axs_pca, pca_df.shape[1])
+plt.setp(axs_pca,
+         xticks=np.arange(len(pca_names)),
+         xticklabels=coeffs,
+         yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
+
+for i in range(0, 9):
+    axs_pca[i].yaxis.grid(color='gray', linestyle='dashed')
+    axs_pca[i].set_title(pca_names[i+9] + " Coefficients")
+    axs_pca[i].bar(np.arange(len(pca_names)), V[i+9])
+    axs_pca[i].axhline(linewidth=1, color='black')
+    axs_pca[i].set_xticklabels(coeffs, rotation=45)
+
+plt.show()
+
+# show coefficients for last PC
+fig_pca, axs_pca = plt.subplots(1, 1, figsize=(5, 2), constrained_layout=True)
+plt.setp(axs_pca,
+         xticks=np.arange(len(pca_names)),
+         xticklabels=coeffs,
+         yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
+
+axs_pca.yaxis.grid(color='gray', linestyle='dashed')
+axs_pca.set_title(pca_names[18] + " Coefficients")
+axs_pca.bar(np.arange(len(pca_names)), V[18])
+axs_pca.axhline(linewidth=1, color='black')
+axs_pca.set_xticklabels(coeffs, rotation=45)
+
+plt.show()
