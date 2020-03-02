@@ -5,6 +5,16 @@ import numpy as np
 import seaborn as sb
 import pandas as pd
 
+
+def every_nth(input, n, iteration=1):
+    output = input
+
+    for i in range(iteration):
+        output = output[np.mod(np.arange(output.size), n) != 0]
+
+    return output
+
+
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
@@ -30,27 +40,36 @@ data_max = data.max(axis=0)
 
 box_data = df_data.drop(['mode', 'key', 'loudness', 'tempo', 'time_signature', 'popularity_interval', 'duration_ms'],
                         axis=1)
+
 f, ax = plt.subplots()
 ax = sb.boxplot(data=box_data, showfliers=False)
 plt.xticks(rotation=-15)
 plt.show()
 
-plt.boxplot(box_data.values)
+plt.boxplot(box_data.values, sym='+')
 plt.xticks(range(1, 8), box_data.columns.values)
 plt.show()
 
-plt.figure(figsize=(9, 3))
+###############################################
+# Remaining boxplots
+###############################################
 
-plt.subplot(131)
-sb.boxplot(data=df_data['duration_ms'], showfliers=False, orient='h')
-plt.xlabel("Duration (ms)")
-plt.subplot(132)
-sb.boxplot(data=df_data['tempo'], showfliers=False, color='red', orient='h')
-plt.xlabel("Tempo (BPS)")
-plt.subplot(133)
-sb.boxplot(data=df_data['loudness'], showfliers=False, color='purple', orient='h')
-plt.xlabel("Loudness (dB)")
-plt.suptitle('Categorical Plotting')
+
+remainder = ['duration_ms', 'tempo', 'loudness']
+box_ylabels = ['Duration (ms)', 'Tempo (bps)', 'Loudness (dB)']
+
+fig, axs = plt.subplots(2, 3, figsize=(16, 8), constrained_layout=True)
+
+for i in range(len(remainder)):
+    axs[0, i].boxplot(df_data[remainder[i]], showfliers=False)
+    axs[0, i].set_ylabel(box_ylabels[i])
+    axs[0, i].set_xticks([])
+
+for i in range(len(remainder)):
+    axs[1, i].boxplot(every_nth(df_data[remainder[i]].values, 2, 2), sym='+')
+    axs[1, i].set_ylabel(box_ylabels[i])
+    axs[1, i].set_xticks([])
+
 plt.show()
 
 ###############################################
@@ -80,6 +99,7 @@ U, S, V = svd(Y, full_matrices=False)
 rho = (S * S) / (S * S).sum()
 
 threshold = 0.9
+
 # Plot variance explained
 f2 = plt.figure()
 xl = [sum(x) for x in zip(list(range(len(rho))), [1] * len(rho))]
@@ -105,43 +125,6 @@ V = V.T
 # Project the centered data onto principal component space
 Z = Y @ V
 
-"""
-# Indices of the principal components to be plotted
-i = 0
-j = 1
-
-# Plot PCA of the data
-f = figure()
-title('Spotify Music Attributes: PCA')
-# Z = array(Z)
-for color in range(C):
-    # select indices belonging to class c:
-    class_mask = y == class_dict[color]
-    if color == 4:
-        plot(Z[class_mask, i], Z[class_mask, j], 'o', alpha=1, markevery=20)
-    else:
-        plot(Z[class_mask, i], Z[class_mask, j], 'o', alpha=.8, markevery=150)
-legend(class_names)
-xlabel('PC{0}'.format(i + 1))
-ylabel('PC{0}'.format(j + 1))
-
-# Output result to screen
-show()
-
-# Reformat attribute names for transformed matrix
-attribute_names = add_elements_to_list(attribute_names,
-                                       class_names,
-                                       len(attribute_names),
-                                       added_string='popularity_interval ')
-attribute_names = add_elements_to_list(attribute_names,
-                                       mode_names,
-                                       8,
-                                       added_string='mode ')
-attribute_names = np.delete(attribute_names,
-                            np.where(attribute_names == 'mode'))
-attribute_names = np.delete(attribute_names,
-                            np.where(attribute_names == 'popularity_interval'))
-"""
 pca_names = []
 coeffs = []
 for i in range(len(rho)):
@@ -152,7 +135,6 @@ pca_df = pd.DataFrame(data=V, columns=pca_names)
 
 
 def trim_axs(axs, N):
-    """little helper to massage the axs list to have correct length..."""
     axs = axs.flat
     for ax in axs[N:]:
         ax.remove()
