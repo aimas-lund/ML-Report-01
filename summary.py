@@ -187,9 +187,12 @@ pdf = stats.norm.pdf(x,loc=17,scale=2)
 plt.plot(x,pdf,'.',color='red')
 """
 #hist = sb.distplot(X[:,2],norm_hist=True)
-plt.hist(X[:, 15], bins=200)
+plt.hist(X[:, 1], bins=200)
+plt.title('Danceability')
+plt.ylabel('Frequency')
+plt.xlabel('Value')
 plt.show()
-
+#1 3 6 11
 
 df = pd.DataFrame(X)
 plt.matshow(df.corr())
