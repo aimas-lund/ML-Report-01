@@ -373,7 +373,7 @@ from scipy import stats
 
 y = data[:,[10]]             # Tempo(target)
 selector = [x for x in range(data.shape[1]) if x != 10]
-X = data[:, selector]
+X = data[:, selector] # the rest of the data set
 #X = data[:,:14]           # the rest of features
 N, M = X.shape
 C = 2
@@ -396,12 +396,12 @@ if do_pca_preprocessing:
 
 
 # Parameters for neural network classifier
-n_hidden_units = 10     # number of hidden units
+n_hidden_units = 20     # number of hidden units
 n_replicates = 1        # number of networks trained in each k-fold
 max_iter = 10000
 
 # K-fold crossvalidation
-K = 5                   # only three folds to speed up this example
+K = 5                  # only three folds to speed up this example
 CV = model_selection.KFold(K, shuffle=True)
 
 # Setup figure for display of learning curves and error rates in fold
@@ -485,8 +485,8 @@ plt.plot(y_true, y_est,'ob',alpha=.25)
 plt.legend(['Perfect estimation','Model estimations'])
 plt.title('Tempo: estimated versus true value (for last CV-fold)')
 plt.ylim(axis_range); plt.xlim(axis_range)
-plt.xlabel('True value')
-plt.ylabel('Estimated value')
+plt.xlabel('True value (bmp)')
+plt.ylabel('Estimated value (bpm)')
 plt.grid()
 
 plt.show()
