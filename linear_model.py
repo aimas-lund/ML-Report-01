@@ -26,14 +26,15 @@ lin_model = lm.LinearRegression()   # create model
 # the test set we keep for testing
 # the training set we use k-folds cross validation
 
-scores = cross_val_score(lin_model, X_train, y_train, cv=folds)
+scores = cross_val_score(lin_model, X_train, y_train, cv=folds)         # calculates x-validation scores
 print("X-validation used: %i-folds" % folds)
 print("X-validation accuracy: %0.5f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
-predictions = cross_val_predict(lin_model, X_test, y_test, cv=folds)
-accuracy = metrics.r2_score(y_test, predictions)
+predictions = cross_val_predict(lin_model, X_test, y_test, cv=folds)    # calculates the test accuracy
+accuracy = metrics.r2_score(y_test, predictions)    # calculates the R^2 value between true- & predicted values
 print("Test Accuracy: %0.5f" % accuracy)
 
+# plot true- vs. predicted values
 plt.scatter(y_test, predictions, marker='x')
 plt.xlabel("True Tempo")
 plt.ylabel("Predicted Tempo")
