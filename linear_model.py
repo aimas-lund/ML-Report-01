@@ -5,7 +5,6 @@ from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split, cross_val_predict,cross_val_score
 from sklearn import metrics
 import matplotlib.pyplot as plt
-from auxiliary import every_nth
 
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)            # data as pandas DataFrame format
@@ -18,25 +17,24 @@ N = data.shape[0]                           # number of rows in the dataset
 M = data.shape[1]                           # number of columns in the dataset
 y = data[:, 10]                             # class belonging to each row in normal format
 X = np.delete(data, 10, axis=1)
+folds = 15                                  # fold for k-folds x-validation
 
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
-
-# create model
-lin_model = lm.LinearRegression()
-
+lin_model = lm.LinearRegression()   # create model
 
 # the test set we keep for testing
 # the training set we use k-folds cross validation
-folds = 15
+
 scores = cross_val_score(lin_model, X_train, y_train, cv=folds)
-print(scores)
+print("X-validation used: %i-folds" % folds)
+print("X-validation accuracy: %0.5f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
 predictions = cross_val_predict(lin_model, X_test, y_test, cv=folds)
+accuracy = metrics.r2_score(y_test, predictions)
+print("Test Accuracy: %0.5f" % accuracy)
+
 plt.scatter(y_test, predictions, marker='x')
 plt.xlabel("True Tempo")
 plt.ylabel("Predicted Tempo")
 plt.show()
-
-accuracy = metrics.r2_score(y_test, predictions)
-print("Accuracy: {}".format(accuracy))
