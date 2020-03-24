@@ -1,6 +1,5 @@
 from auxiliary import one_out_of_k, every_nth
 import matplotlib.pyplot as plt
-from scipy import stats
 from scipy.linalg import svd
 import numpy as np
 import seaborn as sb
@@ -64,11 +63,13 @@ for i in range(len(remainder)):
     axs[1, i].set_xticks([])
 
 plt.show()
+
 """
 ###############################################
 # Seaborn Plotting
 ###############################################
 """
+
 palette = ['blue', 'purple', 'red', 'green', 'black']
 # print plot of energy vs loudness
 sb.set(style="ticks", rc={'figure.figsize': (16, 6)})
@@ -106,13 +107,13 @@ j = 7
 f = plt.figure()
 plt.title('PCA')
 color = np.array(['b','m','r','g','k'])
-#Z = array(Z)
+#Z = np.array(Z)
 for c in range(C):
     # select indices belonging to class c:
     class_mask = y==c+1
     plt.plot(Z[class_mask,i], Z[class_mask,j], 'o', 
              alpha=.5, 
-             c=color[class_mask])
+             c=color[c])
 plt.legend(class_names)
 plt.xlabel('PC{0}'.format(i+1))
 plt.ylabel('PC{0}'.format(j+1))
@@ -122,7 +123,7 @@ plt.show()
 
 i = 6
 j = 8
-
+"""
 # Plot PCA of the data
 f = plt.figure()
 plt.title('PCA')
@@ -139,7 +140,7 @@ plt.ylabel('PC{0}'.format(j+1))
 
 # Output result to screen
 plt.show()
-
+"""
 
 i = 3
 j = 7
@@ -209,9 +210,9 @@ plt.matshow(df.corr())
 plt.colorbar()
 plt.show()
 
-
-for i in range(19):
-    for j in range(19):
+"""
+for i in range(M-C):
+    for j in range(M-C):
 # Plot PCA of the data
         f = plt.figure()
         plt.title('PCA')
@@ -226,7 +227,7 @@ for i in range(19):
         
         # Output result to screen
         plt.show()
-
+"""
 
 threshold = 0.9
 
@@ -260,7 +261,6 @@ pca_df = pd.DataFrame(data=V, columns=pca_names)
 # print first 9 PC's
 
 fig_pca, axs_pca = plt.subplots(3, 3, figsize=(16, 8), constrained_layout=True)
-axs_pca = trim_axs(axs_pca, pca_df.shape[1])
 plt.setp(axs_pca,
          xticks=np.arange(len(pca_names)),
          xticklabels=coeffs,
@@ -278,7 +278,6 @@ plt.show()
 # show PC's for index 9-18
 
 fig_pca, axs_pca = plt.subplots(2, 2, figsize=(16, 8), constrained_layout=True)
-axs_pca = trim_axs(axs_pca, pca_df.shape[1])
 plt.setp(axs_pca,
          xticks=np.arange(len(pca_names)),
          xticklabels=coeffs,
