@@ -1,4 +1,4 @@
-from auxiliary import one_out_of_k, add_elements_to_list
+from auxiliary import one_out_of_k, every_nth
 import matplotlib.pyplot as plt
 from scipy import stats
 from scipy.linalg import svd
@@ -7,33 +7,20 @@ import seaborn as sb
 import pandas as pd
 
 
-def every_nth(input, n, iteration=1):
-    output = input
-
-    for i in range(iteration):
-        output = output[np.mod(np.arange(output.size), n) != 0]
-
-    return output
-
-def trim_axs(axs, N):
-    axs = axs.flat
-    for ax in axs[N:]:
-        ax.remove()
-    return axs[:N]
-
 file_path = "./res/spotify-data-apr-2019.csv"
-df_data = pd.read_csv(file_path)
-attribute_names = df_data.columns.values
-data = df_data.values
+df_data = pd.read_csv(file_path)            # data as pandas DataFrame format
+attribute_names = df_data.columns.values    # numpy array of attribute names
+data = df_data.values                       # all data in numpy array format
 
 class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)  # One-out-of-K on 'popularity_interval'
-mode_names, X = one_out_of_k(X, column_index=8, return_uniques=True)  # One-out-of-K on 'mode'
 class_dict = dict(zip(range(len(class_names)), class_names))
 
-y = data[:, 13]
-N = len(y)
-M = len(attribute_names)
-C = len(class_names)
+y = data[:, 13]             # class belonging to each row in normal format
+y_k = X[:, 13:]             # class attributes with one-out-of-k encoding
+X = X[:, :13]               # data set with all non-class attributes
+N = len(y)                  # number of observations
+M = len(attribute_names)    # number of attributes (including class attributes)
+C = len(class_names)        # number of class attributes
 
 ###############################################
 # Summary Statistics
@@ -290,14 +277,14 @@ plt.show()
 
 # show PC's for index 9-18
 
-fig_pca, axs_pca = plt.subplots(3, 3, figsize=(16, 8), constrained_layout=True)
+fig_pca, axs_pca = plt.subplots(2, 2, figsize=(16, 8), constrained_layout=True)
 axs_pca = trim_axs(axs_pca, pca_df.shape[1])
 plt.setp(axs_pca,
          xticks=np.arange(len(pca_names)),
          xticklabels=coeffs,
          yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
 
-for i in range(0, 9):
+for i in range(0, 4):
     axs_pca[i].yaxis.grid(color='gray', linestyle='dashed')
     axs_pca[i].set_title(pca_names[i+9] + " Coefficients")
     axs_pca[i].bar(np.arange(len(pca_names)), V[i+9])
@@ -314,8 +301,8 @@ plt.setp(axs_pca,
          yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
 
 axs_pca.yaxis.grid(color='gray', linestyle='dashed')
-axs_pca.set_title(pca_names[18] + " Coefficients")
-axs_pca.bar(np.arange(len(pca_names)), V[18])
+axs_pca.set_title(pca_names[12] + " Coefficients")
+axs_pca.bar(np.arange(len(pca_names)), V[12])
 axs_pca.axhline(linewidth=1, color='black')
 axs_pca.set_xticklabels(coeffs, rotation=45)
 
