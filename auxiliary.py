@@ -57,3 +57,11 @@ def one_out_of_k(input, column_index=0, return_uniques=False):
         return uniques, output
     else:
         return output
+
+def every_nth(input, n, iteration=1):
+    output = input
+
+    for i in range(iteration):
+        output = output[np.mod(np.arange(output.size), n) != 0]
+
+    return output

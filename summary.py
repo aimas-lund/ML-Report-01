@@ -1,4 +1,4 @@
-from auxiliary import one_out_of_k, add_elements_to_list
+from auxiliary import one_out_of_k, every_nth
 import matplotlib.pyplot as plt
 from scipy.linalg import svd
 import numpy as np
@@ -6,29 +6,20 @@ import seaborn as sb
 import pandas as pd
 
 
-def every_nth(input, n, iteration=1):
-    output = input
-
-    for i in range(iteration):
-        output = output[np.mod(np.arange(output.size), n) != 0]
-
-    return output
-
-
 file_path = "./res/spotify-data-apr-2019.csv"
-df_data = pd.read_csv(file_path)
-attribute_names = df_data.columns.values
-data = df_data.values
+df_data = pd.read_csv(file_path)            # data as pandas DataFrame format
+attribute_names = df_data.columns.values    # numpy array of attribute names
+data = df_data.values                       # all data in numpy array format
 
 class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)  # One-out-of-K on 'popularity_interval'
 class_dict = dict(zip(range(len(class_names)), class_names))
 
-y = data[:, 13] # class belonging to each row in normal format
-y_3ok = X[:, 13:]
-X = X[:, :13]
-N = len(y)
-M = len(attribute_names)
-C = len(class_names)
+y = data[:, 13]             # class belonging to each row in normal format
+y_k = X[:, 13:]             # class attributes with one-out-of-k encoding
+X = X[:, :13]               # data set with all non-class attributes
+N = len(y)                  # number of observations
+M = len(attribute_names)    # number of attributes (including class attributes)
+C = len(class_names)        # number of class attributes
 
 ###############################################
 # Summary Statistics
