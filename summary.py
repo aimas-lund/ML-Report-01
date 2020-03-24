@@ -38,7 +38,7 @@ C = len(class_names)
 ###############################################
 # Summary Statistics
 ###############################################
-
+"""
 data_mean = data.mean(axis=0)
 data_std = data.std(axis=0)
 data_min = data.min(axis=0)
@@ -55,12 +55,12 @@ plt.show()
 plt.boxplot(box_data.values, sym='+')
 plt.xticks(range(1, 8), box_data.columns.values)
 plt.show()
-
+"""
 ###############################################
 # Remaining boxplots
 ###############################################
 
-
+"""
 remainder = ['duration_ms', 'tempo', 'loudness']
 box_ylabels = ['Duration (ms)', 'Tempo (bps)', 'Loudness (dB)']
 
@@ -91,11 +91,11 @@ sb.relplot(x="energy", y="loudness",
            col="popularity_interval",
            alpha=0.5,
            data=df_data)
-
+"""
 ###############################################
 # Principal Component Analysis
 ###############################################
-
+"""
 Y = np.array(X - np.ones((N, 1)) * X.mean(axis=0), dtype=float) / X.std(axis=0)
 
 # PCA by computing SVD of Y
@@ -189,13 +189,13 @@ plt.ylabel('PC{0}'.format(j+1))
 
 # Output result to screen
 plt.show()
-
+"""
 from scipy import stats
 
 ######################################
 #Histogram
 ######################################
-
+"""
 # Number of bins in histogram
 nbins = 20
 
@@ -215,8 +215,10 @@ plt.title('Danceability')
 plt.ylabel('Frequency')
 plt.xlabel('Value')
 plt.show()
+"""
 #1 3 6 11
-
+"""
+#Covariance matrix
 df = pd.DataFrame(X)
 plt.matshow(df.corr())
 plt.colorbar()
@@ -240,7 +242,8 @@ for i in range(19):
         # Output result to screen
         plt.show()
 
-
+"""
+"""
 threshold = 0.9
 
 # Plot variance explained
@@ -256,11 +259,11 @@ plt.ylabel('Variance explained')
 plt.legend(['Individual', 'Cumulative', 'Threshold'])
 plt.grid()
 plt.show()
-
+"""
 ###############################################
 # Principal Component Analysis Algorithm
 ###############################################
-
+"""
 
 pca_names = []
 coeffs = []
@@ -320,3 +323,38 @@ axs_pca.axhline(linewidth=1, color='black')
 axs_pca.set_xticklabels(coeffs, rotation=45)
 
 plt.show()
+"""
+################################################
+# Linear regression
+################################################
+
+
+from matplotlib.pylab import figure, subplot, plot, xlabel, ylabel, hist, show
+import sklearn.linear_model as lm
+
+
+# Split dataset into features and target vector
+tempo_idx = 11
+y = X[:,tempo_idx]
+
+X_cols = list(range(0,tempo_idx)) + list(range(tempo_idx+1,19))
+X = X[:,X_cols]
+
+# Fit ordinary least squares regression model
+model = lm.LinearRegression()
+model.fit(X,y)
+
+# Predict alcohol content
+y_est = model.predict(X)
+residual = y_est-y
+
+# Display scatter plot
+figure()
+subplot(2,1,1)
+plot(y, y_est, '.')
+xlabel('Tempo (true)'); ylabel('Tempo (estimated)');
+subplot(2,1,2)
+hist(residual,40)
+
+show()
+
