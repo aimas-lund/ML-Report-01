@@ -76,6 +76,11 @@ CV = model_selection.KFold(K, shuffle=True)
 # Setup figure for display of learning curves and error rates in fold
 summaries, summaries_axes = plt.subplots(1,2, figsize=(10,5))
 # Make a list for storing assigned color of learning curve for up to K=10
+
+"""
+###################################
+#farven skal lige fixes, det sidste 3 går igen
+"""
 color_list = ['tab:orange', 'tab:green', 'tab:purple', 'tab:brown', 'tab:pink',
               'tab:gray', 'tab:olive', 'tab:cyan', 'tab:red', 'tab:blue',
               'tab:orange','tab:green', 'tab:purple']
