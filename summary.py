@@ -21,10 +21,11 @@ attribute_names = df_data.columns.values
 data = df_data.values
 
 class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)  # One-out-of-K on 'popularity_interval'
-mode_names, X = one_out_of_k(X, column_index=8, return_uniques=True)  # One-out-of-K on 'mode'
 class_dict = dict(zip(range(len(class_names)), class_names))
 
-y = data[:, 13]
+y = data[:, 13] # class belonging to each row in normal format
+y_3ok = X[:, 13:]
+X = X[:, :13]
 N = len(y)
 M = len(attribute_names)
 C = len(class_names)
@@ -161,14 +162,14 @@ plt.show()
 
 # show PC's for index 9-18
 
-fig_pca, axs_pca = plt.subplots(3, 3, figsize=(16, 8), constrained_layout=True)
+fig_pca, axs_pca = plt.subplots(2, 2, figsize=(16, 8), constrained_layout=True)
 axs_pca = trim_axs(axs_pca, pca_df.shape[1])
 plt.setp(axs_pca,
          xticks=np.arange(len(pca_names)),
          xticklabels=coeffs,
          yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
 
-for i in range(0, 9):
+for i in range(0, 4):
     axs_pca[i].yaxis.grid(color='gray', linestyle='dashed')
     axs_pca[i].set_title(pca_names[i+9] + " Coefficients")
     axs_pca[i].bar(np.arange(len(pca_names)), V[i+9])
@@ -185,8 +186,8 @@ plt.setp(axs_pca,
          yticks=[-1.0, -.75, -.5, -.25, 0.0, .25, .5, .75, 1.0])
 
 axs_pca.yaxis.grid(color='gray', linestyle='dashed')
-axs_pca.set_title(pca_names[18] + " Coefficients")
-axs_pca.bar(np.arange(len(pca_names)), V[18])
+axs_pca.set_title(pca_names[12] + " Coefficients")
+axs_pca.bar(np.arange(len(pca_names)), V[12])
 axs_pca.axhline(linewidth=1, color='black')
 axs_pca.set_xticklabels(coeffs, rotation=45)
 
