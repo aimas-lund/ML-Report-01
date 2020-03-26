@@ -31,30 +31,35 @@ df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
 data = df_data.values
 
+
+y = data[:,[10]]             # Tempo(target)
+selector = [x for x in range(data.shape[1]) if x != 10]
+X = data[:, selector] # the rest of the data set
+#X = data[:,:14]           # the rest of features
+N, M = X.shape
+C = 2
+attributeNames = ['acousticness', 'danceability', 'duration_ms', 'energy',
+                  'instrumentalness', 'key','liveness', 'loudness', 'mode',
+                   'speechiness', 'time_signature', 'valence', 'popularity_interval']
 ################################################
 #Neuralnetwork classification
 ################################################
+
 # Load Matlab data file and extract variables of interest
 
-y = data[:,[13]]             # Tempo(target)
-selector = [x for x in range(data.shape[1]) if x != 13]
-X = data[:, selector] # the rest of the data set
+X = X - np.ones((X.shape[0],1)) * np.mean(X,0)
 
-N, M = X.shape
-C = len(classNames)
 
 # Simple holdout-set crossvalidation
 test_proportion = 0.5
 X_train, X_test, y_train, y_test = model_selection.train_test_split(X,y,test_size=test_proportion)
 
-attributeNames =  ['acousticness', 'danceability', 'duration_ms', 'energy',
-                  'instrumentalness', 'key','liveness', 'loudness', 'mode',
-                   'speechiness','tempo', 'time_signature', 'valence']
 
-classNames = ['popularity interval 1', 'popularity interval 2', 'popularity interval 3',
-              'popularity interval 4', 'popularity interval 5']
+classNames = ['Popularity interval 1', 'Popularity interval 2', 'Popularity interval 3',
+               'Popularity interval 4', 'Popularity interval 5']
 
-
+N, M = X.shape
+C = len(classNames)
 #%% Model fitting and prediction
 
 # Define the model structure
