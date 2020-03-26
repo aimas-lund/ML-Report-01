@@ -55,11 +55,13 @@ X = X - np.ones((X.shape[0],1)) * np.mean(X,0)
 vf = 0.2                                    # fraction of the data reserved for validation (usually between 0.2 and 0.3)
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
+y_test = np.squeeze(y_test) -1
+y_train = np.squeeze(y_train) -1
+y = np.squeeze(y) -1
 
 
-
-classNames = ['Popularity interval 1', 'Popularity interval 2', 'Popularity interval 3',
-               'Popularity interval 4', 'Popularity interval 5']
+classNames = np.squeeze(np.array(['Popularity interval 1', 'Popularity interval 2', 'Popularity interval 3',
+               'Popularity interval 4', 'Popularity interval 5']))
 
 N, M = X.shape
 C = len(classNames)
@@ -98,10 +100,8 @@ e = (y_test_est != y_test)
 print('Number of miss-classifications for ANN:\n\t {0} out of {1}'.format(sum(e),len(e)))
 
 predict = lambda x:  (torch.max(net(torch.tensor(x, dtype=torch.float)), dim=1)[1]).data.numpy() 
-figure(1,figsize=(9,9))
-visualize_decision_boundary(predict, [X_train, X_test], [y_train, y_test], attributeNames, classNames)
-title('ANN decision boundaries')
+# figure(1,figsize=(9,9))
+# visualize_decision_boundary(predict, [X_train, X_test], [y_train, y_test], attributeNames, classNames)
+# title('ANN decision boundaries')
 
-show()
-
-print('Ran Exercise 8.3.1')
+# show()
