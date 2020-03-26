@@ -30,10 +30,11 @@ df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
 data = df_data.values
 
+"""
 class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)  # One-out-of-K on 'popularity_interval'
 mode_names, X = one_out_of_k(X, column_index=8, return_uniques=True)  # One-out-of-K on 'mode'
 class_dict = dict(zip(range(len(class_names)), class_names))
-
+"""
 
 ################################################
 #Neuralnetwork tempo
@@ -65,12 +66,12 @@ if do_pca_preprocessing:
 
 
 # Parameters for neural network classifier
-n_hidden_units = 20     # number of hidden units
+n_hidden_units =2     # number of hidden units
 n_replicates = 1        # number of networks trained in each k-fold
 max_iter = 10000
 
 # K-fold crossvalidation
-K = 5                  # only three folds to speed up this example
+K = 3                  # only three folds to speed up this example
 CV = model_selection.KFold(K, shuffle=True)
 
 # Setup figure for display of learning curves and error rates in fold

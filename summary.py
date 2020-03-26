@@ -189,9 +189,9 @@ plt.ylabel('PC{0}'.format(j+1))
 
 # Output result to screen
 plt.show()
-"""
-from scipy import stats
 
+from scipy import stats
+"""
 ######################################
 #Histogram
 ######################################
