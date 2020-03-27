@@ -7,7 +7,7 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 from auxiliary import get_percentiles
 from sklearn import preprocessing
-
+from auxiliary import one_out_of_k
 
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
@@ -20,6 +20,7 @@ N = data.shape[0]  # number of rows in the data set
 M = data.shape[1]  # number of columns in the data set
 y = data[:, 10]  # class belonging to each row in normal format
 X = np.delete(data, 10, axis=1)
+X = one_out_of_k(X, 12)     # one out of K on popularity interval
 X = preprocessing.scale(X)
 folds = 10  # fold for k-folds x-validation
 
@@ -60,11 +61,11 @@ for data in tempos:
     x_limits_dist.append(get_percentiles(data, 0.001, 99.99))
 
 for idx, ax in enumerate(axs):
-    ax.hist(tempos[idx], bins=30, density=True, facecolor="#0000FF")    # plot histogram with densities
+    ax.hist(tempos[idx], bins=30, density=True, facecolor="#0000FF")  # plot histogram with densities
     # calculate the x- and y-values of the fitted, skewed normal distribution
     x_dist.append(np.linspace(x_limits_dist[idx][0], x_limits_dist[idx][1], 100))
     y_dist.append(skewnorm.pdf(x_dist[idx], norm_param[idx][0], norm_param[idx][1], norm_param[idx][2]))
-    ax.plot(x_dist[idx], y_dist[idx])   # plot distributions
+    ax.plot(x_dist[idx], y_dist[idx])  # plot distributions
     ax.set_title(titles[idx])
     ax.set_xlabel("%s Tempo" % titles[idx])
     ax.set_ylabel("Density")
