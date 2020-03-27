@@ -1,19 +1,11 @@
 import numpy as np
 import pandas as pd
 import sklearn.linear_model as lm
-from sklearn.model_selection import KFold
 from sklearn.model_selection import train_test_split, cross_val_predict, cross_val_score
 from scipy.stats import skewnorm, norm
 from sklearn import metrics
 import matplotlib.pyplot as plt
-
-
-def get_percentiles(x, lower=10., upper=90.):
-    return np.percentile(np.array(x), lower), np.percentile(np.array(x), upper)
-
-
-def get_limits(x):
-    return min(x), max(x)
+from auxiliary import get_percentiles
 
 
 file_path = "./res/spotify-data-apr-2019.csv"
