@@ -7,7 +7,7 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 from auxiliary import get_percentiles
 from sklearn import preprocessing
-from auxiliary import one_out_of_k
+from auxiliary import one_out_of_k, calc_distribution
 
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
@@ -20,7 +20,7 @@ N = data.shape[0]  # number of rows in the data set
 M = data.shape[1]  # number of columns in the data set
 y = data[:, 10]  # class belonging to each row in normal format
 X = np.delete(data, 10, axis=1)
-X = one_out_of_k(X, 12)     # one out of K on popularity interval
+X = one_out_of_k(X, 12)  # one out of K on popularity interval
 X = preprocessing.scale(X)
 folds = 10  # fold for k-folds x-validation
 
@@ -39,13 +39,6 @@ predictions = cross_val_predict(lin_model, X_test, y_test, cv=folds)  # calculat
 accuracy = metrics.r2_score(y_test, predictions)  # calculates the R^2 value between true- & predicted values
 print("Test Accuracy: %0.5f" % accuracy)
 
-# plot true- vs. predicted values
-plt.scatter(predictions, y_test, marker='x')
-plt.xlabel("Predicted Tempo")
-plt.ylabel("True Tempo")
-plt.title("Predicted- vs. True tempo")
-plt.show()
-
 # plot histogram of predicted and true tempos
 fig, axs = plt.subplots(1, 2, figsize=(10, 4))
 titles = ["True", "Predicted"]
@@ -58,7 +51,7 @@ x_limits_dist = []
 
 for data in tempos:
     norm_param.append(skewnorm.fit(data))
-    x_limits_dist.append(get_percentiles(data, 0.001, 99.99))
+    x_limits_dist.append(get_percentiles(data, 0.01, 99.99))
 
 for idx, ax in enumerate(axs):
     ax.hist(tempos[idx], bins=30, density=True, facecolor="#0000FF")  # plot histogram with densities
@@ -74,16 +67,26 @@ for idx, ax in enumerate(axs):
 plt.show()
 
 # plot distributions together
-fig, ax = plt.subplots(1)
+fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+color = ['#4C4C4C', '#0000FF']
 for idx, dist in enumerate(y_dist):
-    ax.plot(x_dist[idx], dist)
-    ax.set_xlabel("Tempo")
-    ax.set_xlim(x_limits_dist[1])
-    ax.set_ylabel("Density")
-    ax.legend(titles)
-    ax.set_title("Comparing the distributions")
-    ax.grid()
+    ax[0].plot(x_dist[idx], dist, c=color[idx])
+    ax[0].set_xlabel("Tempo")
+    ax[0].set_xlim(x_limits_dist[1])
+    ax[0].set_ylabel("Density")
+    ax[0].legend(titles)
+    ax[0].grid()
 
+
+residuals = predictions - y_test
+
+d_res_x, d_res_y = calc_distribution(residuals)
+
+ax[1].hist(residuals, bins=40, density=True, facecolor="#0000FF")
+ax[1].plot(d_res_x, d_res_y)
+ax[1].set_xlabel("Tempo estimation error")
+ax[1].set_ylabel("Density")
+ax[1].grid()
 plt.show()
 
 # plot histogram of K-fold scores
