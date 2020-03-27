@@ -36,9 +36,10 @@ accuracy = metrics.r2_score(y_test, predictions)  # calculates the R^2 value bet
 print("Test Accuracy: %0.5f" % accuracy)
 
 # plot true- vs. predicted values
-plt.scatter(y_test, predictions, marker='x')
-plt.xlabel("True Tempo")
-plt.ylabel("Predicted Tempo")
+plt.scatter(predictions, y_test, marker='x')
+plt.xlabel("Predicted Tempo")
+plt.ylabel("True Tempo")
+plt.title("Predicted- vs. True tempo")
 plt.show()
 
 # plot histogram of predicted and true tempos
@@ -56,10 +57,11 @@ for data in tempos:
     x_limits_dist.append(get_percentiles(data, 0.001, 99.99))
 
 for idx, ax in enumerate(axs):
-    ax.hist(tempos[idx], bins=30, density=True, facecolor="#0000FF")
+    ax.hist(tempos[idx], bins=30, density=True, facecolor="#0000FF")    # plot histogram with densities
+    # calculate the x- and y-values of the fitted, skewed normal distribution
     x_dist.append(np.linspace(x_limits_dist[idx][0], x_limits_dist[idx][1], 100))
     y_dist.append(skewnorm.pdf(x_dist[idx], norm_param[idx][0], norm_param[idx][1], norm_param[idx][2]))
-    ax.plot(x_dist[idx], y_dist[idx])
+    ax.plot(x_dist[idx], y_dist[idx])   # plot distributions
     ax.set_title(titles[idx])
     ax.set_xlabel("%s Tempo" % titles[idx])
     ax.set_ylabel("Density")
@@ -68,18 +70,22 @@ for idx, ax in enumerate(axs):
 plt.show()
 
 # plot distributions together
+fig, ax = plt.subplots(1)
 for idx, dist in enumerate(y_dist):
-    plt.plot(x_dist[idx], dist)
-    plt.xlabel("Tempo")
-    plt.ylabel("Density")
-    plt.grid()
+    ax.plot(x_dist[idx], dist)
+    ax.set_xlabel("Tempo")
+    ax.set_xlim(x_limits_dist[1])
+    ax.set_ylabel("Density")
+    ax.legend(titles)
+    ax.set_title("Comparing the distributions")
+    ax.grid()
 
 plt.show()
 
 # plot histogram of K-fold scores
 plt.hist(scores, folds, facecolor="#0000FF")
 plt.title("Density of scores of K-fold cross-validation")
-plt.xlabel("Scores")
-plt.ylabel("Density")
+plt.xlabel("Cross-validation score")
+plt.ylabel("Count")
 plt.grid()
 plt.show()
