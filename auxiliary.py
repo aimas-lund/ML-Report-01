@@ -5,6 +5,7 @@ Created on Tue Feb 11 13:44:37 2020
 @author: Team Forest
 """
 import numpy as np
+from scipy.stats import skewnorm, norm
 
 
 def add_elements_to_list(list,
@@ -81,3 +82,22 @@ def get_percentiles(x, lower=10., upper=90.):
 
 def get_limits(x):
     return min(x), max(x)
+
+def calc_distribution(y, type='norm', lower=0.01, upper=99.99, points=100):
+    lo, up = get_percentiles(y, lower, upper)
+    X = np.linspace(lo, up, points)
+
+    if type == 'norm':
+        p1, p2 = norm.fit(y)
+        Y = norm.pdf(X, p1, p2)
+
+        return X, Y
+
+    elif type == 'skewed':
+        p1, p2, p3 = skewnorm.fit(y)
+        Y = skewnorm.pdf(X, p1, p2, p3)
+
+        return X, Y
+
+    else:
+        raise AttributeError("'type' not recognized.")
