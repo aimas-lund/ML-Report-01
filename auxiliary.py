@@ -73,3 +73,11 @@ def trim_axs(axs, N):
     for ax in axs[N:]:
         ax.remove()
     return axs[:N]
+
+
+def get_percentiles(x, lower=10., upper=90.):
+    return np.percentile(np.array(x), lower), np.percentile(np.array(x), upper)
+
+
+def get_limits(x):
+    return min(x), max(x)
