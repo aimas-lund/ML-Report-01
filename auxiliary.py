@@ -58,6 +58,7 @@ def one_out_of_k(input, column_index=0, return_uniques=False):
     else:
         return output
 
+
 def every_nth(input, n, iteration=1):
     output = input
 
@@ -65,3 +66,10 @@ def every_nth(input, n, iteration=1):
         output = output[np.mod(np.arange(output.size), n) != 0]
 
     return output
+
+
+def trim_axs(axs, N):
+    axs = axs.flat
+    for ax in axs[N:]:
+        ax.remove()
+    return axs[:N]

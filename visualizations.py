@@ -7,13 +7,6 @@ import seaborn as sb
 import pandas as pd
 
 
-def trim_axs(axs, N):
-    axs = axs.flat
-    for ax in axs[N:]:
-        ax.remove()
-    return axs[:N]
-
-
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
 attribute_names = df_data.columns.values  # numpy array of attribute names
