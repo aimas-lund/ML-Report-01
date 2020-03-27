@@ -6,6 +6,7 @@ from scipy.stats import skewnorm, norm
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from auxiliary import get_percentiles
+from sklearn import preprocessing
 
 
 file_path = "./res/spotify-data-apr-2019.csv"
@@ -19,10 +20,12 @@ N = data.shape[0]  # number of rows in the data set
 M = data.shape[1]  # number of columns in the data set
 y = data[:, 10]  # class belonging to each row in normal format
 X = np.delete(data, 10, axis=1)
-folds = 15  # fold for k-folds x-validation
+X = preprocessing.scale(X)
+folds = 10  # fold for k-folds x-validation
 
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
+
 lin_model = lm.LinearRegression()  # create model
 
 # the test set we keep for testing
