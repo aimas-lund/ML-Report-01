@@ -83,6 +83,7 @@ def get_percentiles(x, lower=10., upper=90.):
 def get_limits(x):
     return min(x), max(x)
 
+
 def calc_distribution(y, type='norm', lower=0.01, upper=99.99, points=100):
     lo, up = get_percentiles(y, lower, upper)
     X = np.linspace(lo, up, points)
@@ -101,3 +102,11 @@ def calc_distribution(y, type='norm', lower=0.01, upper=99.99, points=100):
 
     else:
         raise AttributeError("'type' not recognized.")
+
+
+def trim_ticks(X, max_length=6):
+    for i in range(len(X)):
+        if (type(X[i]) is str) and (len(X[i]) >= max_length):
+            X[i] = X[i][:max_length] + "..."
+
+    return X
