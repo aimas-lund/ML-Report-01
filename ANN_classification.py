@@ -68,7 +68,7 @@ C = len(classNames)
 #%% Model fitting and prediction
 
 # Define the model structure
-n_hidden_units = 5 # number of hidden units in the signle hidden layer
+n_hidden_units = 300 # number of hidden units in the signle hidden layer
 model = lambda: torch.nn.Sequential(
                             torch.nn.Linear(M, n_hidden_units), #M features to H hiden units
                             torch.nn.ReLU(), # 1st transfer function
@@ -98,7 +98,7 @@ y_test_est = (torch.max(softmax_logits, dim=1)[1]).data.numpy()
 # Determine errors
 e = (y_test_est != y_test)
 print('Number of miss-classifications for ANN:\n\t {0} out of {1}'.format(sum(e),len(e)))
-
+print('percentage missclassified {0}'.format((sum(e)/len(e))*100,))
 predict = lambda x:  (torch.max(net(torch.tensor(x, dtype=torch.float)), dim=1)[1]).data.numpy() 
 # figure(1,figsize=(9,9))
 # visualize_decision_boundary(predict, [X_train, X_test], [y_train, y_test], attributeNames, classNames)
