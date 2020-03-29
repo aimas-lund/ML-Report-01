@@ -30,12 +30,6 @@ df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
 data = df_data.values
 
-"""
-class_names, X = one_out_of_k(data, column_index=13, return_uniques=True)  # One-out-of-K on 'popularity_interval'
-mode_names, X = one_out_of_k(X, column_index=8, return_uniques=True)  # One-out-of-K on 'mode'
-class_dict = dict(zip(range(len(class_names)), class_names))
-"""
-
 ################################################
 #Neuralnetwork tempo
 ################################################
@@ -65,19 +59,6 @@ if do_pca_preprocessing:
     N, M = X.shape
 
 
-# Parameters for neural network classifier
-n_hidden_units =2     # number of hidden units
-n_replicates = 1        # number of networks trained in each k-fold
-max_iter = 10000
-
-# K-fold crossvalidation
-K = 3                  # only three folds to speed up this example
-CV = model_selection.KFold(K, shuffle=True)
-
-# Setup figure for display of learning curves and error rates in fold
-summaries, summaries_axes = plt.subplots(1,2, figsize=(10,5))
-# Make a list for storing assigned color of learning curve for up to K=10
-
 """
 ###################################
 #farven skal lige fixes, det sidste 3 går igen
@@ -85,13 +66,34 @@ summaries, summaries_axes = plt.subplots(1,2, figsize=(10,5))
 color_list = ['tab:orange', 'tab:green', 'tab:purple', 'tab:brown', 'tab:pink',
               'tab:gray', 'tab:olive', 'tab:cyan', 'tab:red', 'tab:blue',
               'tab:orange','tab:green', 'tab:purple']
+
+# Parameters for neural network classifier
+n_hidden_units =2     # number of hidden units
+n_replicates = 1        # number of networks trained in each k-fold
+max_iter = 10000
+
+# K-fold crossvalidation
+K = 2                # only three folds to speed up this example
+CV = model_selection.KFold(K, shuffle=True)
+
+# Setup figure for display of learning curves and error rates in fold
+summaries, summaries_axes = plt.subplots(1,2, figsize=(10,5))
+# Make a list for storing assigned color of learning curve for up to K=10
+
 # Define the model
+
 model = lambda: torch.nn.Sequential(
                     torch.nn.Linear(M, n_hidden_units), #M features to n_hidden_units
-                    torch.nn.Tanh(),   # 1st transfer function,
+                    torch.nn.Tanh(), # 1st transfer function,
+                    torch.nn.Linear(n_hidden_units, n_hidden_units), #M features to n_hidden_units
+                    torch.nn.Tanh(), # 2st transfer function,
+                    torch.nn.Linear(n_hidden_units, n_hidden_units),
+                    torch.nn.Tanh(),
                     torch.nn.Linear(n_hidden_units, 1), # n_hidden_units to 1 output neuron
                     # no final tranfer function, i.e. "linear output"
+                    
                     )
+
 loss_fn = torch.nn.MSELoss() # notice how this is now a mean-squared-error loss
 
 print('Training model of type:\n\n{}\n'.format(str(model())))
