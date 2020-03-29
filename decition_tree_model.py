@@ -10,6 +10,8 @@ from sklearn import preprocessing
 from auxiliary import one_out_of_k, calc_distribution, trim_ticks
 from scipy.linalg import svd
 
+print("Utilizing attributes as is...")
+
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
 attribute_names = df_data.columns.values  # numpy array of attribute names
@@ -27,7 +29,7 @@ folds = 10  # fold for k-folds x-validation
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
 
-weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1, 3, 5]))   # pre-defined weights for each class
+weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1.05, 1.5, 4]))   # pre-defined weights for each class
 criterion = 'gini'
 min_sample = 20
 dec_tree = tree.DecisionTreeClassifier(criterion=criterion,
@@ -44,6 +46,33 @@ predictions = cross_val_predict(dec_tree, X_test, y_test, cv=folds)  # calculate
 classification_report = metrics.classification_report(y_test, predictions)  # calculates the R^2 value between true- & predicted values
 print(classification_report)
 
+_, p_count = np.unique(predictions, return_counts=True)
+classes, t_count = np.unique(y_test, return_counts=True)
+
+barWidth = 0.25
+r1 = [x - barWidth/2 for x in np.arange(5)+1]
+r2 = [x + barWidth/2 for x in np.arange(5)+1]
+
+plt.bar(r1, t_count, width=barWidth, label='true', color='#0000FF')
+plt.bar(r2, p_count, width=barWidth, label='predicted', color='#4C4C4C')
+plt.legend()
+plt.grid()
+plt.show()
+
+# create confusion matrix
+CM = metrics.confusion_matrix(y_test,
+                         predictions,
+                         [1, 2, 3, 4, 5])
+
+plt.matshow(CM, cmap=plt.cm.GnBu)
+plt.colorbar()
+for i in range(len(CM)):
+    for j in range(len(CM)):
+        text = plt.text(j, i, CM[i, j],
+                       ha="center", va="center", color="w")
+plt.xticks(classes)
+plt.yticks(classes)
+plt.show()
 #tree.export_graphviz(dec_tree, out_file="decition_tree_model.dot")
 #with open("decition_tree_model.dot") as f:
 #    dot_graph = f.read()
@@ -56,6 +85,7 @@ print(classification_report)
 # with PCA
 ####################################################
 
+print("\nUtilizing Principal components...")
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
 attribute_names = df_data.columns.values  # numpy array of attribute names
@@ -103,7 +133,7 @@ X = X[:, :10]
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
 
-weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1, 3, 5]))   # pre-defined weights for each class
+weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1.05, 1.5, 4]))   # pre-defined weights for each class
 criterion = 'gini'
 min_sample = 20
 dec_tree = tree.DecisionTreeClassifier(criterion=criterion,
@@ -119,3 +149,31 @@ print("X-validation accuracy: %0.5f (+/- %0.5f)" % (scores.mean(), scores.std() 
 predictions = cross_val_predict(dec_tree, X_test, y_test, cv=folds)  # calculates the test accuracy
 classification_report = metrics.classification_report(y_test, predictions)  # calculates the R^2 value between true- & predicted values
 print(classification_report)
+
+_, p_count = np.unique(predictions, return_counts=True)
+classes, t_count = np.unique(y_test, return_counts=True)
+
+barWidth = 0.25
+r1 = [x - barWidth/2 for x in np.arange(5)+1]
+r2 = [x + barWidth/2 for x in np.arange(5)+1]
+
+plt.bar(r1, t_count, width=barWidth, label='true', color='#0000FF')
+plt.bar(r2, p_count, width=barWidth, label='predicted', color='#4C4C4C')
+plt.legend()
+plt.grid()
+plt.show()
+
+# create confusion matrix
+CM = metrics.confusion_matrix(y_test,
+                         predictions,
+                         [1, 2, 3, 4, 5])
+
+plt.matshow(CM, cmap=plt.cm.GnBu)
+plt.colorbar()
+for i in range(len(CM)):
+    for j in range(len(CM)):
+        text = plt.text(j, i, CM[i, j],
+                       ha="center", va="center", color="w")
+plt.xticks(classes)
+plt.yticks(classes)
+plt.show()
