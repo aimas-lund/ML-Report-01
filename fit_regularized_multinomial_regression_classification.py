@@ -1,28 +1,4 @@
-# exercise 8.3.2 Fit multinomial regression
-from matplotlib.pyplot import figure, show, title
-from scipy.io import loadmat
-from toolbox_02450 import dbplotf, train_neural_net, visualize_decision_boundary
-import numpy as np
 import sklearn.linear_model as lm
-
-# Load Matlab data file and extract variables of interest
-
-"""
-mat_data = loadmat('../Data/synth1.mat')
-X = mat_data['X']
-X = X - np.ones((X.shape[0],1)) * np.mean(X,0)
-X_train = mat_data['X_train']
-X_test = mat_data['X_test']
-y = mat_data['y'].squeeze()
-y_train = mat_data['y_train'].squeeze()
-y_test = mat_data['y_test'].squeeze()
-
-attributeNames = [name[0] for name in mat_data['attributeNames'].squeeze()]
-classNames = [name[0][0] for name in mat_data['classNames']]
-
-N, M = X.shape
-C = len(classNames)
-"""
 from auxiliary import one_out_of_k, add_elements_to_list
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import figure, show, title
@@ -62,7 +38,8 @@ y = data[:,[13]]             # Tempo(target)
 selector = [x for x in range(data.shape[1]) if x != 13]
 X = data[:, selector] # the rest of the data set
 #X = data[:,:14]           # the rest of features
-
+N, M = X.shape
+C = 2
 attributeNames = ['acousticness', 'danceability', 'duration_ms', 'energy',
                   'instrumentalness', 'key','liveness', 'loudness', 'mode',
                    'speechiness', 'time_signature', 'valence', 'popularity_interval']
@@ -81,30 +58,44 @@ y_train = np.squeeze(y_train) -1
 y = np.squeeze(y) -1
 
 
-
-classNames = ['Popularity interval 1', 'Popularity interval 2', 'Popularity interval 3',
-               'Popularity interval 4', 'Popularity interval 5']
+classNames = np.squeeze(np.array(['Popularity interval 1', 'Popularity interval 2', 'Popularity interval 3',
+               'Popularity interval 4', 'Popularity interval 5']))
 
 N, M = X.shape
 C = len(classNames)
 #%% Model fitting and prediction
+# Standardize data based on training set
+mu = np.mean(X_train, 0)
+sigma = np.std(X_train, 0)
+X_train = (X_train - mu) / sigma
+X_test = (X_test - mu) / sigma
 
-# Multinomial logistic regression
-logreg = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', tol=1e-4, random_state=1)
-logreg.fit(X_train,y_train)
+# Fit multinomial logistic regression model
+#regularization_strength = 1e-3
+regularization_strength = 1e5
+#Try a high strength, e.g. 1e5, especially for synth2, synth3 and synth4
+mdl = lm.LogisticRegression(solver='lbfgs', multi_class='multinomial', 
+                               tol=1e-4, random_state=1, 
+                               penalty='l2', C=1/regularization_strength)
+mdl.fit(X_train,y_train)
+y_test_est = mdl.predict(X_test)
 
-# To display coefficients use print(logreg.coef_). For a 4 class problem with a 
-# feature space, these weights will have shape (4, 2).
+test_error_rate = np.sum(y_test_est!=y_test) / len(y_test)
+
+predict = lambda x: np.argmax(mdl.predict_proba(x),1)
+#plt.figure(2,figsize=(9,9))
+#visualize_decision_boundary(predict, [X_train, X_test], [y_train, y_test], attributeNames, classNames)
+#plt.title('LogReg decision boundaries')
+#plt.show()
+
 
 # Number of miss-classifications
-print('Number of miss-classifications for Multinormal regression:\n\t {0} out of {1}'.format(np.sum(logreg.predict(X_test)!=y_test),len(y_test)))
-print('procentage miss-classifications {0}'.format(np.sum((logreg.predict(X_test)!=y_test)/len(y_test))*100))
+print('Error rate: \n\t {0} % out of {1}'.format(test_error_rate*100,len(y_test)))
+# %%
 
-predict = lambda x: np.argmax(logreg.predict_proba(x),1)
-#figure(2,figsize=(9,9))
-#visualize_decision_boundary(predict, [X_train, X_test], [y_train, y_test], attributeNames, classNames)
-#title('LogReg decision boundaries')
+#plt.figure(2, figsize=(9,9))
+#plt.hist([y_train, y_test, y_test_est], color=['red','green','blue'], density=True)
+#plt.legend(['Training labels','Test labels','Estimated test labels'])
 
-#show()
 
 print('Ran Exercise 8.3.2')
