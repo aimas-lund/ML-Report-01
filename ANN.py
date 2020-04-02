@@ -10,21 +10,6 @@ import torch
 from sklearn import model_selection
 from toolbox_02450 import train_neural_net, draw_neural_net
 
-
-def every_nth(input, n, iteration=1):
-    output = input
-
-    for i in range(iteration):
-        output = output[np.mod(np.arange(output.size), n) != 0]
-
-    return output
-
-def trim_axs(axs, N):
-    axs = axs.flat
-    for ax in axs[N:]:
-        ax.remove()
-    return axs[:N]
-
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
@@ -68,13 +53,13 @@ color_list = ['tab:orange', 'tab:green', 'tab:purple', 'tab:brown', 'tab:pink',
               'tab:orange','tab:green', 'tab:purple']
 
 # Parameters for neural network classifier
-n_hidden_units =2     # number of hidden units
+n_hidden_units =1     # number of hidden units
 n_replicates = 1        # number of networks trained in each k-fold
 max_iter = 10000
 
 # K-fold crossvalidation
-K = 2                # only three folds to speed up this example
-CV = model_selection.KFold(K, shuffle=True)
+K = 5               # only three folds to speed up this example
+CV = model_selection.KFold(K, shuffle=False)
 
 # Setup figure for display of learning curves and error rates in fold
 summaries, summaries_axes = plt.subplots(1,2, figsize=(10,5))
@@ -84,14 +69,13 @@ summaries, summaries_axes = plt.subplots(1,2, figsize=(10,5))
 
 model = lambda: torch.nn.Sequential(
                     torch.nn.Linear(M, n_hidden_units), #M features to n_hidden_units
-                    torch.nn.Tanh(), # 1st transfer function,
+                    torch.nn.ReLU(), # 1st transfer function,
                     torch.nn.Linear(n_hidden_units, n_hidden_units), #M features to n_hidden_units
-                    torch.nn.Tanh(), # 2st transfer function,
+                    torch.nn.ReLU(), # 2st transfer function,
                     torch.nn.Linear(n_hidden_units, n_hidden_units),
-                    torch.nn.Tanh(),
+                    torch.nn.ReLU(),
                     torch.nn.Linear(n_hidden_units, 1), # n_hidden_units to 1 output neuron
                     # no final tranfer function, i.e. "linear output"
-                    
                     )
 
 loss_fn = torch.nn.MSELoss() # notice how this is now a mean-squared-error loss
@@ -139,7 +123,8 @@ summaries_axes[1].set_xlabel('Fold')
 summaries_axes[1].set_xticks(np.arange(1, K+1))
 summaries_axes[1].set_ylabel('MSE')
 summaries_axes[1].set_title('Test mean-squared-error')
-    
+ 
+  
 print('Diagram of best neural net in last fold:')
 weights = [net[i].weight.data.numpy().T for i in [0,2]]
 biases = [net[i].bias.data.numpy() for i in [0,2]]
