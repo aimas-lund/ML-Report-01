@@ -34,7 +34,7 @@ vf = 0.2
 folds = 5 # fold for k-folds
 
 # create training set and test set
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf, shuffle =False)
 
 mean = int(np.mean(y_train))
 y_train_mean = y_train

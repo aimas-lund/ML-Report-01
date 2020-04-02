@@ -26,10 +26,9 @@ X = data[:, selector] # the rest of the data set
 vf = 0.2
 folds = 5
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf, shuffle =False)
 
-reg = linear_model.Ridge(alpha=0.1) #alpha is the same as lambda
-reg.fit(X_train,y_train)
+
 
 #y_estimated = model.predict(y_test)
 #residual = y_estimated-y_test
@@ -37,7 +36,7 @@ reg.fit(X_train,y_train)
 #print("Root Mean squared error: %.2f" % sqrt(mean_squared_error(y_test,y_estimated)))
 
 
-model = lm.LinearRegression()
+model = linear_model.Ridge(alpha=1110.1)  #alpha is the same as lambda
 model = model.fit(X_train,y_train)
 
 predictions = cross_val_predict(model, X_test, y_test, cv=folds)  # calculates the test accuracy
