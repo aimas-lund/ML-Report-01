@@ -1,10 +1,6 @@
-# exercise 5.2.4
+
 from matplotlib.pylab import figure, subplot, plot, xlabel, ylabel, hist, show
 import sklearn.linear_model as lm
-
-
-
-
 from auxiliary import one_out_of_k, add_elements_to_list
 import matplotlib.pyplot as plt
 from scipy import stats
@@ -18,7 +14,7 @@ from sklearn.dummy import DummyRegressor
 from sklearn.model_selection import train_test_split
 from math import sqrt
 from sklearn.metrics import mean_squared_error
-
+import copy
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)
 attribute_names = df_data.columns.values
@@ -37,14 +33,14 @@ folds = 5 # fold for k-folds
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf, shuffle =False)
 
 mean = int(np.mean(y_train))
-y_train_mean = y_train
+y_train_mean = copy.copy(y_train)
 y_train_mean.fill(mean)
 
 
 model = lm.LinearRegression()
 model = model.fit(y_train_mean,y_train)
 
-y_test_mean=y_test
+y_test_mean = copy.copy(y_test)
 y_test_mean.fill(mean)
 #y_estimated = model.predict(y_test)
 #residual = y_estimated-y_test
@@ -54,7 +50,7 @@ predictions = cross_val_predict(lin_model, y_test_mean, y_test, cv=folds)  # cal
 print("Mean squared error: %.2f" % mean_squared_error(y_test,predictions))
 print("Root Mean squared error: %.2f" % sqrt(mean_squared_error(y_test,predictions)))
 
-
+print("MSE ; %.2f" %(sqrt(mean_squared_error(y_test,predictions))**2))
 
 """
 # Display scatter plot

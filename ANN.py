@@ -53,7 +53,7 @@ color_list = ['tab:orange', 'tab:green', 'tab:purple', 'tab:brown', 'tab:pink',
               'tab:orange','tab:green', 'tab:purple']
 
 # Parameters for neural network classifier
-n_hidden_units =1     # number of hidden units
+n_hidden_units = 19     # number of hidden units
 n_replicates = 1        # number of networks trained in each k-fold
 max_iter = 10000
 
@@ -133,7 +133,7 @@ draw_neural_net(weights, biases, tf, attribute_names=attributeNames)
 
 # Print the average classification error rate
 print('\nEstimated generalization error, RMSE: {0}'.format(round(np.sqrt(np.mean(errors)), 4)))
-
+print('\nMSE : {0}'.format(round((np.sqrt(np.mean(errors)**2)), 4)))
 # When dealing with regression outputs, a simple way of looking at the quality
 # of predictions visually is by plotting the estimated value as a function of 
 # the true/known value - these values should all be along a straight line "y=x", 
@@ -141,6 +141,10 @@ print('\nEstimated generalization error, RMSE: {0}'.format(round(np.sqrt(np.mean
 # points are below the y=x line, then the model underestimates the value
 plt.figure(figsize=(10,10))
 y_est = y_test_est.data.numpy(); y_true = y_test.data.numpy()
+
+np.savetxt("y_est.csv", y_est, delimiter=",")
+np.savetxt("y_true.csv", y_true, delimiter=",")
+
 axis_range = [np.min([y_est, y_true])-1,np.max([y_est, y_true])+1]
 plt.plot(axis_range,axis_range,'k--')
 plt.plot(y_true, y_est,'ob',alpha=.25)
