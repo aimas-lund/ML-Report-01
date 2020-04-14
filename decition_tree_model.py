@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import graphviz as gr
 import sklearn.tree as tree
 from sklearn.model_selection import train_test_split, cross_val_predict, cross_val_score
 from sklearn import metrics

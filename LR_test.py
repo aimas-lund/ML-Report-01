@@ -8,10 +8,11 @@ from scipy.linalg import svd
 import numpy as np
 import seaborn as sb
 import pandas as pd
+import copy
 from scipy.io import loadmat
 from sklearn import model_selection
 from sklearn.dummy import DummyRegressor
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_predict
 from math import sqrt
 from sklearn.metrics import mean_squared_error
 import copy
@@ -45,7 +46,7 @@ y_test_mean.fill(mean)
 #y_estimated = model.predict(y_test)
 #residual = y_estimated-y_test
 
-predictions = cross_val_predict(lin_model, y_test_mean, y_test, cv=folds)  # calculates the test accuracy
+predictions = cross_val_predict(model, y_test_mean, y_test, cv=folds)  # calculates the test accuracy
 
 print("Mean squared error: %.2f" % mean_squared_error(y_test,predictions))
 print("Root Mean squared error: %.2f" % sqrt(mean_squared_error(y_test,predictions)))

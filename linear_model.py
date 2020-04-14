@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import sklearn.linear_model as lm 
+import sklearn.linear_model as lm
 from sklearn.model_selection import train_test_split, cross_val_predict, cross_val_score
 from scipy.stats import skewnorm, norm
 from sklearn import metrics
@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 from auxiliary import get_percentiles
 from sklearn import preprocessing
 from auxiliary import one_out_of_k, calc_distribution, trim_ticks
+import math
+from sklearn.metrics import mean_squared_error
 
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
@@ -26,7 +28,7 @@ folds = 10  # fold for k-folds x-validation
 
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
-
+"""
 lin_model = lm.LinearRegression()  # create model
 
 # the test set we keep for testing
@@ -45,7 +47,7 @@ plt.bar(trim_ticks(tempo_corr.index.values), tempo_corr.values, color="#0000FF")
 plt.xticks(np.arange(12), rotation=75)
 plt.ylabel("Correlation Coefficient")
 plt.grid()
-#plt.savefig("correlation.png",bbox_inches='tight',dpi=100)
+# plt.savefig("correlation.png",bbox_inches='tight',dpi=100)
 plt.show()
 
 # plot histogram of predicted and true tempos
@@ -85,7 +87,6 @@ for idx, dist in enumerate(y_dist):
     ax[0].set_ylabel("Density")
     ax[0].legend(titles)
     ax[0].grid()
-
 
 residuals = predictions - y_test
 
@@ -172,7 +173,6 @@ for idx, dist in enumerate(y_dist):
     ax[0].legend(titles)
     ax[0].grid()
 
-
 residuals = predictions - y_test
 
 d_res_x, d_res_y = calc_distribution(residuals)
@@ -191,4 +191,42 @@ plt.xlabel("Cross-validation score")
 plt.ylabel("Count")
 plt.grid()
 plt.show()
+"""
+# plot RMSE as a function of regularization rate for Lasso and Ridge
+n_alphas = 200
+alphas = np.logspace(-1, 8, n_alphas)
 
+RMSE_l = []
+RMSE_r = []
+
+for a in alphas:
+    model = lm.Ridge(alpha=a, fit_intercept=False)
+    predictions = cross_val_predict(model, X, y, cv=folds)
+    RMSE_r.append(math.sqrt(mean_squared_error(y, predictions)))
+
+index = RMSE_r.index(min(RMSE_r))
+print("RMSE min :", RMSE_r[index])
+print("lambda value at min RMSE :", alphas[index])
+
+for a in alphas:
+    model = lm.Lasso(alpha=a, fit_intercept=False)
+    predictions = cross_val_predict(model, X, y, cv=folds)
+    RMSE_l.append(math.sqrt(mean_squared_error(y, predictions)))
+
+index = RMSE_l.index(min(RMSE_l))
+print("RMSE min :", RMSE_l[index])
+print("lambda value at min RMSE :", alphas[index])
+
+color = ['#4C4C4C', '#0000FF']
+
+plt.figure(figsize=(5, 3))
+plt.plot(alphas, RMSE_l, c=color[0])
+plt.plot(alphas, RMSE_r, c=color[1])
+models = ["Lasso", "Ridge"]
+plt.legend(models)
+plt.xscale("log")
+plt.xlabel('lambda')
+plt.ylabel('RMSE')
+plt.grid()
+plt.tight_layout()
+plt.show()
