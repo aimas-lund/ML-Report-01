@@ -8,6 +8,7 @@ from auxiliary import get_percentiles
 from sklearn import preprocessing
 from auxiliary import one_out_of_k, calc_distribution, trim_ticks
 from scipy.linalg import svd
+from imblearn.under_sampling import RandomUnderSampler
 
 print("Utilizing attributes as is...")
 
@@ -25,15 +26,17 @@ X = np.delete(data, 13, axis=1)
 X = preprocessing.scale(X)
 folds = 10  # fold for k-folds x-validation
 
+rus = RandomUnderSampler(random_state=0)
+X, y = rus.fit_resample(X, y)
+
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
 
-weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1.05, 1.5, 4]))  # pre-defined weights for each class
+#weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1.05, 1.5, 4]))  # pre-defined weights for each class
 criterion = 'gini'
 min_sample = 20
 dec_tree = tree.DecisionTreeClassifier(criterion=criterion,
-                                       min_samples_split=min_sample,
-                                       class_weight=weight_dict)  # create model
+                                       min_samples_split=min_sample)  # create model
 dec_tree.fit(X_train, y_train)
 # the test set we keep for testing
 # the training set we use k-folds cross validation
@@ -133,6 +136,9 @@ plt.show()
 """
 
 X = X[:, :10]
+
+rus = RandomUnderSampler(random_state=0)
+X, y = rus.fit_resample(X, y)
 
 # create training set and test set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)

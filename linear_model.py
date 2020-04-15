@@ -23,7 +23,7 @@ M = data.shape[1]  # number of columns in the data set
 y = data[:, 10]  # class belonging to each row in normal format
 X = np.delete(data, 10, axis=1)
 X = one_out_of_k(X, 12)  # one out of K on popularity interval
-X = preprocessing.scale(X)
+#X = preprocessing.scale(X)
 folds = 10  # fold for k-folds x-validation
 
 # create training set and test set
@@ -193,37 +193,24 @@ plt.grid()
 plt.show()
 """
 # plot RMSE as a function of regularization rate for Lasso and Ridge
-n_alphas = 200
-alphas = np.logspace(-1, 8, n_alphas)
+n_alphas = 150
+alphas = np.logspace(0, 4, n_alphas)
 
-RMSE_l = []
-RMSE_r = []
+RMSE_1 = []
 
 for a in alphas:
     model = lm.Ridge(alpha=a, fit_intercept=False)
     predictions = cross_val_predict(model, X, y, cv=folds)
-    RMSE_r.append(math.sqrt(mean_squared_error(y, predictions)))
+    RMSE_1.append(math.sqrt(mean_squared_error(y, predictions)))
 
-index = RMSE_r.index(min(RMSE_r))
-print("RMSE min :", RMSE_r[index])
-print("lambda value at min RMSE :", alphas[index])
-
-for a in alphas:
-    model = lm.Lasso(alpha=a, fit_intercept=False)
-    predictions = cross_val_predict(model, X, y, cv=folds)
-    RMSE_l.append(math.sqrt(mean_squared_error(y, predictions)))
-
-index = RMSE_l.index(min(RMSE_l))
-print("RMSE min :", RMSE_l[index])
+index = RMSE_1.index(min(RMSE_1))
+print("RMSE min :", RMSE_1[index])
 print("lambda value at min RMSE :", alphas[index])
 
 color = ['#4C4C4C', '#0000FF']
 
 plt.figure(figsize=(5, 3))
-plt.plot(alphas, RMSE_l, c=color[0])
-plt.plot(alphas, RMSE_r, c=color[1])
-models = ["Lasso", "Ridge"]
-plt.legend(models)
+plt.plot(alphas, RMSE_1, c=color[1])
 plt.xscale("log")
 plt.xlabel('lambda')
 plt.ylabel('RMSE')
