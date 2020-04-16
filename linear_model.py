@@ -5,11 +5,11 @@ from sklearn.model_selection import train_test_split, cross_val_predict, cross_v
 from scipy.stats import skewnorm, norm
 from sklearn import metrics
 import matplotlib.pyplot as plt
-from auxiliary import get_percentiles
 from sklearn import preprocessing
 from auxiliary import one_out_of_k, calc_distribution, trim_ticks
 import math
 from sklearn.metrics import mean_squared_error
+
 
 file_path = "./res/spotify-data-apr-2019.csv"
 df_data = pd.read_csv(file_path)  # data as pandas DataFrame format
@@ -23,6 +23,7 @@ M = data.shape[1]  # number of columns in the data set
 y = data[:, 10]  # class belonging to each row in normal format
 X = np.delete(data, 10, axis=1)
 X = one_out_of_k(X, 12)  # one out of K on popularity interval
+
 #X = preprocessing.scale(X)
 folds = 10  # fold for k-folds x-validation
 
