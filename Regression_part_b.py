@@ -7,8 +7,8 @@ import numpy as np
 from scipy.io import loadmat
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import model_selection
-from toolbox_02450 import jeffrey_interval
-from toolbox_02450 import mcnemar
+#from toolbox_02450 import jeffrey_interval
+#from toolbox_02450 import mcnemar
 from math import sqrt
 from sklearn.metrics import mean_squared_error
 import sklearn.linear_model as lm 
