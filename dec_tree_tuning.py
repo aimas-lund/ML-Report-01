@@ -43,7 +43,7 @@ M = X.shape[1]  # number of columns in the data set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=vf)
 
 weight_dict = dict(zip([1, 2, 3, 4, 5], [1, 1, 1, 1, 1]))  # pre-defined weights for each class
-criterion = 'gini'
+criterion = 'entropy'
 min_sample_tests = 20
 tests = list(range(min_sample_tests))
 recall = []
@@ -54,7 +54,7 @@ length = 0
 for i in range(tests):
     dec_tree = tree.DecisionTreeClassifier(criterion=criterion,
                                            class_weight=weight_dict,
-                                           min_samples_split=5)  # create model
+                                           min_samples_split=20)  # create model
     dec_tree.fit(X_train, y_train)
     y_est = dec_tree.predict(X_test)
     recall.append(recall_score(y_test, y_est, average='macro'))
@@ -100,7 +100,7 @@ plt.show()
 
 dec_tree = tree.DecisionTreeClassifier(criterion=criterion,
                                        class_weight=dict(zip([1, 2, 3, 4, 5], [2, 0.2, 0.2, 0.2, 2])) ,
-                                       min_samples_split=5)  # create model
+                                       min_samples_split=20)  # create model
 dec_tree.fit(X_train, y_train)
 
 scores_b = cross_val_score(dec_tree, X_train, y_train, cv=folds)  # calculates x-validation scores
@@ -153,7 +153,7 @@ print('procentage miss-classifications {0}'.format(np.sum((dec_tree.predict(X_te
 
 dec_tree = tree.DecisionTreeClassifier(criterion=criterion,
                                        class_weight=dict(zip([1, 2, 3, 4, 5], [2, 0.2, 0.2, 0.2, 2])) ,
-                                       min_samples_split=5)  # create model
+                                       min_samples_split=20)  # create model
 dec_tree.fit(X_train, y_train)
 
 print('procentage miss-classifications {0}'.format(np.sum((dec_tree.predict(X_test)!=y_test)/len(y_test))*100))
